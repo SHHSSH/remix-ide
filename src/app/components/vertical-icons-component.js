@@ -8,8 +8,9 @@ const EventEmitter = require('events')
 // Component
 class VerticalIconComponent {
 
-  constructor (name, appStore) {
+  constructor (name, appStore, homeProfile) {
     this.store = appStore
+    this.homeProfile = homeProfile
     this.events = new EventEmitter()
     this.icons = {}
     this.iconKind = {}
@@ -213,6 +214,18 @@ class VerticalIconComponent {
   }
 
   render () {
+    let home = yo`
+    <div
+      class="${css.icon}"
+      onclick="${(e) => {
+        this._iconClick(name)
+        globalRegistry.get('appManager').api.ensureActivated('home')
+      }}"
+      plugin="${this.homeProfile.name}" title="${this.homeProfile.displayName}"
+    >
+      <img class="image" src="${this.homeProfile.icon}" alt="${this.homeProfile.name}"/>
+    </div>`
+
     this.iconKind['fileexplorer'] = yo`
     <div id='fileExplorerIcons'>
     </div>
@@ -255,6 +268,7 @@ class VerticalIconComponent {
 
     this.view = yo`
       <div class=${css.icons}>
+      ${home}
       ${this.iconKind['fileexplorer']}
       ${this.iconKind['compile']}
       ${this.iconKind['run']}
